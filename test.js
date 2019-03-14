@@ -5,6 +5,15 @@ const path = require('path')
 // app.use(BodyParser.urlencoded({ extended: true }));
 const webpush = require('web-push');
 
+var admin = require("firebase-admin");
+var serviceAccount = require("./mypwa-e21e9-firebase-adminsdk-aonwh-8d3955ab63.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+
+
 const vapidKeys = {
   publicKey:
 'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U',
@@ -26,6 +35,16 @@ const payload = {
   //badge: '/html/app-manifest/logo_512.png'
 };
 
+// var message = {
+//   data: {
+//     score: '850',
+//     time: '2:45'
+//   },
+//   token: registrationToken
+// };
+
+
+
 
 app.use(express.static('dist/angular-tour-of-heroes'))
 
@@ -38,11 +57,21 @@ app.post('/hello', (req, res) => {
     let pushSubscription = JSON.parse(str)
     // console.log(pushSubscription.endpoint)
     // console.log(pushSubscription.expirationTime)
+    console.log(pushSubscription)
     webpush.sendNotification(pushSubscription, JSON.stringify(payload)).then(res=>{
       console.log('send success')
     }).catch(err=>{
       console.log('send error')
     });
+
+    // admin.messaging().send(payload)
+    // .then(resp => {
+    //   console.log('send success')
+    // }).catch(err => {
+    //   console.log('send error')
+    // });
+
+
     // setInterval(()=>{
     //   console.log('new message')
     //   webpush.sendNotification(pushSubscription, JSON.stringify(payload))
@@ -69,7 +98,7 @@ app.get('/api/heroes', (req, res) => {
   res.send(heroes)
 })
 
-app.listen(8181, () => console.log('Example app listening on port 8088!'))
+app.listen(8182, () => console.log('Example app listening on port 8182!'))
 
 
 
